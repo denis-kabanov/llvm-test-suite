@@ -1,4 +1,4 @@
-// FIXME unsupported on windows (opencl and level-zero) until fix of libdevice fails
+// FIXME unsupported on windows (opencl and level-zero) until fix of libdevice
 // UNSUPPORTED: windows && (opencl || level_zero)
 // RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out
 // RUN: %HOST_RUN_PLACEHOLDER %t.out
