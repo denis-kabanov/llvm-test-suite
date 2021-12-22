@@ -1,4 +1,3 @@
-// UNSUPPORTED: cuda || hip || level_zero
 // REQUIRES: opencl
 // RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out %opencl_lib
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
