@@ -20,7 +20,7 @@ int main() {
   queue Queue1;
   try {
     Queue1.get_property<property::queue::in_order>();
-    assert(false && "Queue1 was created without any propertys therefore get "
+    assert(false && "Queue1 was created without any properties therefore get "
                     "property should fail.");
   } catch (const invalid_object_error &e) {
     std::string ErrorMessage = e.what();
