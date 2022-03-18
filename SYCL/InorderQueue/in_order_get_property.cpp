@@ -19,6 +19,9 @@ using namespace sycl;
 int main() {
   queue Queue1;
   try {
+    assert(!Queue1.has_property<property::queue::in_order>() &&
+           "Queue1 was created without any properties therefore has property "
+           "should return 0");
     Queue1.get_property<property::queue::in_order>();
     assert(false && "Queue1 was created without any properties therefore get "
                     "property should fail.");
