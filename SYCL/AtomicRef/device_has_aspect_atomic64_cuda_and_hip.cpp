@@ -10,6 +10,8 @@
 using namespace sycl;
 
 int main() {
+  queue Queue;
+  device Dev = Queue.get_device();
   Dev.has(aspect::atomic64);
   return 0;
 }
