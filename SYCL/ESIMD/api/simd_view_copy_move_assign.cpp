@@ -7,25 +7,20 @@
 //===----------------------------------------------------------------------===//
 // REQUIRES: gpu
 // UNSUPPORTED: cuda || hip
-// TODO: esimd_emulator fails due to unimplemented 'half' type
-// XFAIL: esimd_emulator
 // RUN: %clangxx -fsycl %s -o %t.out
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
-
-// UNSUPPORTED: windows
-// Temprorary disabled on Windows until intel/llvm-test-suite#664 fixed
 
 // This test checks the behavior of simd_view constructors
 // and assignment operators.
 
 #include "../esimd_test_utils.hpp"
 
-#include <CL/sycl.hpp>
 #include <sycl/ext/intel/esimd.hpp>
+#include <sycl/sycl.hpp>
 
 #include <iostream>
 
-using namespace cl::sycl;
+using namespace sycl;
 using namespace sycl::ext::intel::esimd;
 
 template <unsigned VL, class T, class F>
@@ -167,8 +162,6 @@ int main(void) {
   std::cout << "Running on " << dev.get_info<info::device::name>() << "\n";
   bool passed = true;
   passed &= testT<char>(q);
-  passed &= testT<short>(q);
-  passed &= testT<int>(q);
   passed &= testT<float>(q);
   passed &= testT<half>(q);
 

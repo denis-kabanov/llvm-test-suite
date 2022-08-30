@@ -6,8 +6,6 @@
 // Missing __spirv_ImageWrite, __spirv_SampledImage,
 // __spirv_ImageSampleExplicitLod on AMD
 // XFAIL: hip_amd
-// Temporarily disable test on Windows due to regressions in GPU driver.
-// UNSUPPORTED: windows
 
 /*
     This file sets up an image, initializes it with data,
@@ -18,9 +16,9 @@
 */
 
 #include "common.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 // pixel data-type for RGBA operations (which is the minimum image type)
 using pixelT = sycl::uint4;

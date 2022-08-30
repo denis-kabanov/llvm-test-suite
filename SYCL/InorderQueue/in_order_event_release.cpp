@@ -13,9 +13,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include <CL/sycl.hpp>
 #include <iostream>
-using namespace cl::sycl;
+#include <sycl/sycl.hpp>
+using namespace sycl;
 
 int main() {
   queue q{property::queue::in_order()};

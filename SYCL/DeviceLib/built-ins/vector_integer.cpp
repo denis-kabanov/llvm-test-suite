@@ -4,12 +4,12 @@
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
 
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
 #include <array>
 #include <cassert>
 
-namespace s = cl::sycl;
+namespace s = sycl;
 
 int main() {
   // max

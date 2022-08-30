@@ -4,9 +4,6 @@
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 
-// TODO: enable this test after flaky bug is gone on Windows
-// UNSUPPORTED: windows
-
 // LevelZero has a bug wherein it always returns the first pixel value.
 // Will re-enable once fixed.
 
@@ -19,9 +16,9 @@
 */
 
 #include "common.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 // pixel data-type for RGBA operations (which is the minimum image type)
 using pixelT = sycl::uint4;

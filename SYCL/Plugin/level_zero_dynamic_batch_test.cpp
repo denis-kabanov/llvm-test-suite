@@ -3,7 +3,7 @@
 // RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple  %s -o %t.out
 
 // Check that dynamic batching raises/lowers batch size
-// RUN: env SYCL_PI_TRACE=2 ZE_DEBUG=1 %GPU_RUN_PLACEHOLDER %t.out 2>&1 | FileCheck --check-prefixes=CKALL,CKDYN %s
+// RUN: env SYCL_PI_TRACE=2 ZE_DEBUG=1 SYCL_PI_LEVEL_ZERO_DEVICE_SCOPE_EVENTS=2 SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS=0 %GPU_RUN_PLACEHOLDER %t.out 2>&1 | FileCheck --check-prefixes=CKALL,CKDYN %s
 
 // level_zero_dynamic_batch_test.cpp
 //
@@ -14,7 +14,7 @@
 // raise the batch size up 3 times.
 //
 // Then the test starts enqueueing only 4 kernels before doing a wait, and
-// it does that 20 times.  That should cause the batch size to
+// it does that 25 times.  That should cause the batch size to
 // be lowered to be less than 4.
 //
 // CKDYN: Raising QueueBatchSize to 5
@@ -39,8 +39,6 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
-
-namespace sycl = cl::sycl;
 
 void validate(uint32_t *result, uint32_t *expect, size_t n) {
   int error = 0;
@@ -166,7 +164,7 @@ int main(int argc, char *argv[]) {
   validate(Y1, Z7, M * N);
   validate(Y1, Z8, M * N);
 
-  for (size_t i = 0; i < 20; i++) {
+  for (size_t i = 0; i < 25; i++) {
     q.submit([&](sycl::handler &h) {
       h.parallel_for<class u32_copy9>(sycl::range<2>{M, N},
                                       [=](sycl::id<2> it) {

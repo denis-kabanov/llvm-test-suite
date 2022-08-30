@@ -3,13 +3,18 @@
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %ACC_RUN_PLACEHOLDER %t.out
 
+// RUN: %clangxx -fsycl -fno-builtin -fsycl-device-lib-jit-link %s -o %t.out
+// RUN: %HOST_RUN_PLACEHOLDER %t.out
+// RUN: %CPU_RUN_PLACEHOLDER %t.out
+// RUN: %ACC_RUN_PLACEHOLDER %t.out
+
 #include "math_utils.hpp"
-#include <CL/sycl.hpp>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <sycl/sycl.hpp>
 
-namespace s = cl::sycl;
+namespace s = sycl;
 constexpr s::access::mode sycl_read = s::access::mode::read;
 constexpr s::access::mode sycl_write = s::access::mode::write;
 

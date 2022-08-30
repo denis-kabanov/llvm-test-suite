@@ -1,7 +1,3 @@
-// FIXME unsupported on level_zero until L0 Plugin support becomes available for
-// discard_queue_events
-// UNSUPPORTED: level_zero
-//
 // RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out
 //
 // RUN: env SYCL_PI_TRACE=2 %CPU_RUN_PLACEHOLDER %t.out &> %t.txt || true
@@ -27,11 +23,11 @@
 //
 // CHECK: The test passed.
 
-#include <CL/sycl.hpp>
 #include <cassert>
 #include <iostream>
+#include <sycl/sycl.hpp>
 
-using namespace cl::sycl;
+using namespace sycl;
 static constexpr int MAGIC_NUM = -1;
 static constexpr size_t BUFFER_SIZE = 16;
 

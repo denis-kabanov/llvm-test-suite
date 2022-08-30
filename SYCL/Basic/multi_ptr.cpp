@@ -17,12 +17,12 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include <CL/sycl.hpp>
 #include <cassert>
 #include <iostream>
+#include <sycl/sycl.hpp>
 #include <type_traits>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 /* This is the class used to name the kernel for the runtime.
  * This must be done when the kernel is expressed as a lambda. */
@@ -151,7 +151,8 @@ template <typename T> void testMultPtrArrowOperator() {
         auto ptr_3 = make_ptr<point<T>, access::address_space::local_space>(
             accessorData_3.get_pointer());
         auto ptr_4 =
-            make_ptr<point<T>, access::address_space::global_device_space>(
+            make_ptr<point<T>,
+                     access::address_space::ext_intel_global_device_space>(
                 accessorData_4.get_pointer());
 
         auto x1 = ptr_1 -> x;

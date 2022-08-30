@@ -4,11 +4,11 @@
 #define TEST_GENERIC_IN_LOCAL 0
 #endif
 
-#include <CL/sycl.hpp>
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <numeric>
+#include <sycl/sycl.hpp>
 #include <type_traits>
 #include <vector>
 
@@ -288,10 +288,6 @@ template <access::address_space space, typename T, typename Difference = T,
 void sub_test_scopes(queue q, size_t N) {
   std::vector<memory_scope> scopes =
       q.get_device().get_info<info::device::atomic_memory_scope_capabilities>();
-  if (std::find(scopes.begin(), scopes.end(), memory_scope::system) !=
-      scopes.end()) {
-    sub_test<space, T, Difference, order, memory_scope::system>(q, N);
-  }
   if (std::find(scopes.begin(), scopes.end(), memory_scope::work_group) !=
       scopes.end()) {
     sub_test<space, T, Difference, order, memory_scope::work_group>(q, N);

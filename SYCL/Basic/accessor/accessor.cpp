@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 #include <cassert>
+#include <iostream>
 #include <sycl/sycl.hpp>
 
 struct IdxID1 {
@@ -556,6 +557,40 @@ int main() {
       return 1;
     }
   }
+
+  // placeholder accessor exception  // SYCL2020 4.7.6.9
+  {
+    sycl::queue q;
+    // host device executes kernels via a different method and there
+    // is no good way to throw an exception at this time.
+    if (!q.is_host()) {
+      sycl::range<1> r(4);
+      sycl::buffer<int, 1> b(r);
+      try {
+        sycl::accessor<int, 1, sycl::access::mode::read_write,
+                       sycl::access::target::device,
+                       sycl::access::placeholder::true_t>
+            acc(b);
+
+        q.submit([&](sycl::handler &cgh) {
+          // we do NOT call .require(acc) without which we should throw a
+          // synchronous exception with errc::kernel_argument
+          cgh.parallel_for<class ph>(
+              r, [=](sycl::id<1> index) { acc[index] = 0; });
+        });
+        q.wait_and_throw();
+        assert(false && "we should not be here, missing exception");
+      } catch (sycl::exception &e) {
+        std::cout << "exception received: " << e.what() << std::endl;
+        assert(e.code() == sycl::errc::kernel_argument &&
+               "incorrect error code");
+      } catch (...) {
+        std::cout << "some other exception" << std::endl;
+        return 1;
+      }
+    }
+  }
+
   {
     try {
       int data = -1;
@@ -702,6 +737,53 @@ int main() {
       assert(false && "we should not be here. operation should have failed");
     } catch (sycl::exception &e) {
       assert(e.code() == sycl::errc::invalid && "errc should be errc::invalid");
+    }
+  }
+
+  // Accessor common property interface
+  {
+    using namespace sycl::ext::oneapi;
+    int data[1] = {0};
+
+    // host accessor
+    try {
+      sycl::buffer<int, 1> buf_data(data, sycl::range<1>(1),
+                                    {sycl::property::buffer::use_host_ptr()});
+      accessor_property_list PL{no_alias, no_offset, sycl::no_init};
+      sycl::accessor acc_1(buf_data, PL);
+      static_assert(acc_1.has_property<property::no_alias>());
+      static_assert(acc_1.has_property<property::no_offset>());
+      assert(acc_1.has_property<sycl::property::no_init>());
+
+      static_assert(acc_1.get_property<property::no_alias>() == no_alias);
+      static_assert(acc_1.get_property<property::no_offset>() == no_offset);
+      // Should not throw "The property is not found"
+      auto noInit = acc_1.get_property<sycl::property::no_init>();
+    } catch (sycl::exception e) {
+      std::cout << "SYCL exception caught: " << e.what() << std::endl;
+    }
+
+    // base accessor
+    try {
+      sycl::buffer<int, 1> buf_data(data, sycl::range<1>(1),
+                                    {sycl::property::buffer::use_host_ptr()});
+      sycl::queue q;
+      accessor_property_list PL{no_alias, no_offset, sycl::no_init};
+
+      q.submit([&](sycl::handler &cgh) {
+        sycl::accessor acc_1(buf_data, PL);
+        static_assert(acc_1.has_property<property::no_alias>());
+        static_assert(acc_1.has_property<property::no_offset>());
+        assert(acc_1.has_property<sycl::property::no_init>());
+
+        static_assert(acc_1.get_property<property::no_alias>() == no_alias);
+        static_assert(acc_1.get_property<property::no_offset>() == no_offset);
+        // Should not throw "The property is not found"
+        auto noInit = acc_1.get_property<sycl::property::no_init>();
+      });
+      q.wait();
+    } catch (sycl::exception e) {
+      std::cout << "SYCL exception caught: " << e.what() << std::endl;
     }
   }
 

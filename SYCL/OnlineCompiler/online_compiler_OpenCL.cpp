@@ -10,17 +10,19 @@
 // All OpenCL specific code is kept here and the common part that can be
 // re-used by other backends is kept in online_compiler_common.hpp file.
 
-#include <CL/sycl.hpp>
-#include <CL/sycl/backend/opencl.hpp>
+#include <sycl/backend/opencl.hpp>
 #include <sycl/ext/intel/online_compiler.hpp>
+#include <sycl/sycl.hpp>
 
 #include <vector>
 
 using byte = unsigned char;
 
 #ifdef RUN_KERNELS
-sycl::kernel getSYCLKernelWithIL(sycl::context &Context,
+sycl::kernel getSYCLKernelWithIL(sycl::queue &Queue,
                                  const std::vector<byte> &IL) {
+  sycl::context Context = Queue.get_context();
+
   cl_int Err;
   cl_program ClProgram =
       clCreateProgramWithIL(sycl::get_native<sycl::backend::opencl>(Context),

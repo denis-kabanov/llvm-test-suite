@@ -14,10 +14,11 @@
 //===----------------------------------------------------------------------===//
 // Checks that set_spec_constant can be used twice on the same program
 
-#include <CL/sycl.hpp>
 #include <chrono>
 #include <cstdint>
+#include <iostream>
 #include <random>
+#include <sycl/sycl.hpp>
 
 class SpecializedKernelOverride;
 

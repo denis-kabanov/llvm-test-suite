@@ -7,8 +7,6 @@
 //===----------------------------------------------------------------------===//
 // REQUIRES: gpu
 // UNSUPPORTED: cuda || hip
-// TODO: esimd_emulator fails due to outdated memory intrinsic
-// XFAIL: esimd_emulator
 // RUN: %clangxx -fsycl %s -o %t.out
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
 //
@@ -28,12 +26,12 @@
 
 #include "../esimd_test_utils.hpp"
 
-#include <CL/sycl.hpp>
 #include <iomanip>
 #include <iostream>
 #include <sycl/ext/intel/esimd.hpp>
+#include <sycl/sycl.hpp>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 template <class T>
 using Acc = accessor<T, 1, access_mode::read_write, access::target::device>;
@@ -111,7 +109,7 @@ struct GatherKernel : KernelBase<T, VL, STRIDE> {
   static const char *get_name() { return "slm_gather"; }
 
   void operator()(nd_item<1> i) const SYCL_ESIMD_KERNEL {
-    slm_init(B::SLM_CHUNK_SIZE);
+    slm_init<B::SLM_CHUNK_SIZE>();
 
     // first, read data w/o shuffling into SLM
     simd<T, VL> val;
@@ -174,7 +172,7 @@ struct ScatterKernel : KernelBase<T, VL, STRIDE> {
   static const char *get_name() { return "slm_scatter"; }
 
   ESIMD_INLINE void operator()(nd_item<1> i) const SYCL_ESIMD_KERNEL {
-    slm_init(B::SLM_CHUNK_SIZE);
+    slm_init<B::SLM_CHUNK_SIZE>();
 
     // first, read data from memory into registers w/o shuffling
     simd<T, VL> val;
@@ -242,7 +240,7 @@ struct GatherKernel<T, 1, STRIDE, TEST_VECTOR_NO_MASK>
   static const char *get_name() { return "slm_gather_vl1"; }
 
   void operator()(nd_item<1> i) const SYCL_ESIMD_KERNEL {
-    slm_init(B::SLM_CHUNK_SIZE);
+    slm_init<B::SLM_CHUNK_SIZE>();
 
     // first, read data into SLM
     T val = scalar_load<T>(B::acc_in, B::get_wi_offset(i) * sizeof(T));
@@ -268,7 +266,7 @@ struct ScatterKernel<T, 1, STRIDE, TEST_VECTOR_NO_MASK>
   static const char *get_name() { return "slm_scatter_vl1"; }
 
   ESIMD_INLINE void operator()(nd_item<1> i) const SYCL_ESIMD_KERNEL {
-    slm_init(B::SLM_CHUNK_SIZE);
+    slm_init<B::SLM_CHUNK_SIZE>();
 
     // first, read data from memory into registers
     simd<T, 1> val;
@@ -389,7 +387,7 @@ bool test_impl(queue q) {
       cgh.parallel_for(nd_range<1>{glob_range, range<1>(WG_SIZE)}, kernel);
     });
     e.wait();
-  } catch (cl::sycl::exception const &e) {
+  } catch (sycl::exception const &e) {
     std::cout << "SYCL exception caught: " << e.what() << '\n';
     delete[] A;
     delete[] B;

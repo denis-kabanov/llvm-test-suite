@@ -12,8 +12,8 @@
 //===----------------------------------------------------------------------===//
 
 #include "helper.hpp"
-#include <CL/sycl.hpp>
-using namespace cl::sycl;
+#include <sycl/sycl.hpp>
+using namespace sycl;
 struct Data {
   unsigned int local_id;
   unsigned int local_range;

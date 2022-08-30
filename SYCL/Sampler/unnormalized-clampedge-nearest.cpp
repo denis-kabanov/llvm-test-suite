@@ -1,12 +1,8 @@
-// Temporarily disable test on Windows due to regressions in GPU driver.
-// UNSUPPORTED: hip, windows
+// UNSUPPORTED: hip
 // RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out
 // RUN: %HOST_RUN_PLACEHOLDER %t.out
 // RUN: %CPU_RUN_PLACEHOLDER %t.out
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
-
-// On Windows, LevelZero returns wrong value for clampedge
-// out of bounds. Waiting on fix.
 
 /*
     This file sets up an image, initializes it with data,
@@ -17,9 +13,9 @@
 */
 
 #include "common.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 // pixel data-type for RGBA operations (which is the minimum image type)
 using pixelT = sycl::uint4;

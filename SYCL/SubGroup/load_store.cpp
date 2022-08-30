@@ -7,9 +7,6 @@
 // AMD
 // XFAIL: hip_amd
 //
-// Missing GroupNonUniformArithmetic capability on CPU RT
-// XFAIL: cpu
-//
 //==----------- load_store.cpp - SYCL sub_group load/store test ------------==//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
@@ -19,13 +16,13 @@
 //===----------------------------------------------------------------------===//
 
 #include "helper.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
 #include <algorithm>
 
 template <typename T, int N> class sycl_subgr;
 
-using namespace cl::sycl;
+using namespace sycl;
 
 template <typename T, int N> void check(queue &Queue) {
   const int G = 512, L = 256;

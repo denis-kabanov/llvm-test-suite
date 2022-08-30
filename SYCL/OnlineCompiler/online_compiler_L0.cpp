@@ -10,8 +10,8 @@
 // All Level-Zero specific code is kept here and the common part that can be
 // re-used by other backends is kept in online_compiler_common.hpp file.
 
-#include <CL/sycl.hpp>
 #include <sycl/ext/intel/online_compiler.hpp>
+#include <sycl/sycl.hpp>
 
 #include <vector>
 
@@ -23,7 +23,7 @@
 using byte = unsigned char;
 
 #ifdef RUN_KERNELS
-sycl::kernel getSYCLKernelWithIL(sycl::context &Context,
+sycl::kernel getSYCLKernelWithIL(sycl::queue &Queue,
                                  const std::vector<byte> &IL) {
 
   ze_module_desc_t ZeModuleDesc = {};
@@ -33,10 +33,12 @@ sycl::kernel getSYCLKernelWithIL(sycl::context &Context,
   ZeModuleDesc.pBuildFlags = "";
   ZeModuleDesc.pConstants = nullptr;
 
-  assert(Context.get_devices().size() == 1 && "Expected to have only 1 device");
-  sycl::device Device = Context.get_devices()[0];
-  auto ZeDevice = Device.get_native<sycl::backend::ext_oneapi_level_zero>();
-  auto ZeContext = Context.get_native<sycl::backend::ext_oneapi_level_zero>();
+  sycl::context Context = Queue.get_context();
+  sycl::device Device = Queue.get_device();
+  auto ZeDevice =
+      sycl::get_native<sycl::backend::ext_oneapi_level_zero>(Device);
+  auto ZeContext =
+      sycl::get_native<sycl::backend::ext_oneapi_level_zero>(Context);
 
   ze_module_build_log_handle_t ZeBuildLog;
   ze_module_handle_t ZeModule;

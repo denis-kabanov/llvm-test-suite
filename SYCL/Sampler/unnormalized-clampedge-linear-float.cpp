@@ -1,5 +1,4 @@
-// Temporarily disable test on Windows due to regressions in GPU driver.
-// UNSUPPORTED: hip, windows
+// UNSUPPORTED: hip
 // RUN: %clangxx -fsycl -fsycl-targets=%sycl_triple %s -o %t.out
 // RUN: %HOST_RUN_PLACEHOLDER %t.out
 // RUN: %GPU_RUN_PLACEHOLDER %t.out
@@ -9,9 +8,6 @@
 // CUDA works with image_channel_type::fp32, but not with any 8-bit per channel
 // type (such as unorm_int8)
 
-// On Windows, LevelZero returns wrong value for clampedge
-// out of bounds. Waiting on fix.
-
 /*
     This file sets up an image, initializes it with data,
     and verifies that the data is sampled correctly with a
@@ -20,9 +16,9 @@
 */
 
 #include "common.hpp"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 
-using namespace cl::sycl;
+using namespace sycl;
 
 using pixelT = sycl::float4;
 
