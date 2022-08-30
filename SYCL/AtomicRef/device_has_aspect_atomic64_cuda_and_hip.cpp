@@ -6,12 +6,14 @@
 // Expected failure because hip does not have atomic64 check implementation
 
 #include <CL/sycl.hpp>
+#include <iostream>
 
 using namespace sycl;
 
 int main() {
   queue Queue;
   device Dev = Queue.get_device();
-  Dev.has(aspect::atomic64);
+  // cout in order to ensure that the query hasn't been optimized out
+  std::cout << Dev.has(aspect::atomic64) << std::endl;
   return 0;
 }
